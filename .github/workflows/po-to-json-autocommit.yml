@@ -2,11 +2,14 @@ name: Auto-convert PO to JSON and commit
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'po/**/*.po'
 
 jobs:
   convert-and-commit:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +47,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase origin master
           
           git add locales/*.json
 
@@ -51,6 +56,6 @@ jobs:
             echo "✅ No JSON changes to commit."
           else
             git commit -m "chore(i18n): auto-update JSON files from updated PO files"
-            git push origin ${{ github.ref }}
+            git push origin master
             echo "🚀 Pushed updated JSON files."
           fi
