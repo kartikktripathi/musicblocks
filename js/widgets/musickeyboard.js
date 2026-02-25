@@ -695,10 +695,8 @@ function MusicKeyboard(activity) {
         widgetWindow.addButton("erase-button.svg", ICONSIZE, _("Clear")).onclick = () => {
             this._notesPlayed = [];
             selectedNotes = [];
-            // if (!that.keyboardShown) {
             this._createTable();
             this._updateWidgetWindowSize();
-            // }
         };
 
         /**
@@ -952,12 +950,6 @@ function MusicKeyboard(activity) {
                 notes = [];
                 for (let i = 0; i < selectedNotes[counter].noteOctave.length; i++) {
                     if (this.keyboardShown && selectedNotes[counter].objId[0] !== null) {
-                        /*
-                        id = this.idContainer.findIndex((ele) => {
-                            return ele[1] === selectedNotes[counter].objId[i];
-                        });
-                        */
-
                         ele = docById(selectedNotes[counter].objId[i]);
                         if (ele !== null) {
                             ele.style.backgroundColor = "lightgrey";
@@ -1450,10 +1442,6 @@ function MusicKeyboard(activity) {
                 };
 
                 cell.onmouseover = () => {
-                    // let obj, i, j;
-                    // obj = cell.id.split(":");
-                    // i = Number(obj[0]);
-                    // j = Number(obj[1]);
                     if (isMouseDown) {
                         if (cell.style.backgroundColor === "black") {
                             cell.style.backgroundColor = cell.getAttribute("cellColor");
@@ -1968,7 +1956,6 @@ function MusicKeyboard(activity) {
      */
     this._createAddRowPieSubmenu = function () {
         docById("wheelDivptm").style.display = "";
-        // docById("wheelDivptm").style.zIndex = "300";
         const pitchLabels = [
             "do",
             "do♯",
@@ -3344,8 +3331,7 @@ function MusicKeyboard(activity) {
      * @memberof ClassName
      */
     this.doMIDI = () => {
-        let duration = 0;
-        let startTime = 0;
+        let startTimeMap = {};
 
         this.getElement = {};
 
@@ -3363,7 +3349,7 @@ function MusicKeyboard(activity) {
          */
         const __startNote = (event, element) => {
             if (!element) return;
-            startTime = event.timeStamp; // Milliseconds();
+            startTimeMap[element.id] = event.timeStamp; // Milliseconds();
             element.style.backgroundColor = platformColor.orange;
             this.activity.logo.synth.trigger(
                 0,
@@ -3391,7 +3377,10 @@ function MusicKeyboard(activity) {
             }
 
             const now = event.timeStamp;
-            duration = now - startTime;
+            const startTime = startTimeMap[element.id] || 0;
+            let duration = now - startTime;
+            delete startTimeMap[element.id];
+
             duration /= 1000;
             this.activity.logo.synth.stopSound(
                 0,
