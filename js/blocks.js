@@ -2123,26 +2123,36 @@ class Blocks {
                 }
 
                 this.adjustDocks(newBlock, true);
-                /** Graphical feedback for the new connection */
-                // Staged scheduling to anchor feedback after docking redraw storm
+                // Graphical feedback for new connection
+                this.findDragGroup(thisBlock);
+                const blocksToHighlight = Array.from(
+                    new Set([...this.dragGroup, newBlock])
+                );
+
+                // Use animation frame for smoother UI
                 requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        const feedbackBlockObj = this.blockList[newBlock];
-                        if (feedbackBlockObj) {
-                            feedbackBlockObj.highlight();
-                            this.activity.refreshCanvas();
-                            setTimeout(() => {
-                                // Guard against rare deletion edge cases
-                                if (
-                                    this.blockList[newBlock] === feedbackBlockObj &&
-                                    !feedbackBlockObj.trash
-                                ) {
-                                    feedbackBlockObj.unhighlight();
-                                    this.activity.refreshCanvas();
-                                }
-                            }, 220);
+                requestAnimationFrame(() => {
+                    blocksToHighlight.forEach(b => {
+                    if (this.blockList[b] && this.blockList[b].loadComplete) {
+                        this.blockList[b].highlight();
+                    }
+                    });
+
+                    this.activity.refreshCanvas();
+
+                    setTimeout(() => {
+                    blocksToHighlight.forEach(b => {
+                        if (
+                        this.blockList[b] &&
+                        !this.blockList[b].trash
+                        ) {
+                        this.blockList[b].unhighlight();
                         }
                     });
+
+                    this.activity.refreshCanvas();
+                    }, 220);
+                });
                 });
 
                 /** Check if top block is one of the widget blocks. */

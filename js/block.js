@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-21 Walter Bender
+// Copyright (c) 2014-21 Walter Bender
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the The GNU Affero General Public
@@ -591,14 +591,20 @@ class Block {
             // Show the highlighted artwork.
             // If the block is disconnected, use the disconnected bitmap.
             if (this.isDisconnected()) {
-                this.disconnectedHighlightBitmap.visible = true;
-                this.highlightBitmap.visible = false;
+                if (this.disconnectedHighlightBitmap !== null) {
+                    this.disconnectedHighlightBitmap.visible = true;
+                }
+                if (this.highlightBitmap !== null) {
+                    this.highlightBitmap.visible = false;
+                }
             } else {
                 if (this.disconnectedHighlightBitmap !== null) {
                     this.disconnectedHighlightBitmap.visible = false;
                 }
 
-                this.highlightBitmap.visible = true;
+                if (this.highlightBitmap !== null) {
+                    this.highlightBitmap.visible = true;
+                }
             }
 
             // If it is an uncollapsed collapsable, make sure the
@@ -644,7 +650,9 @@ class Block {
         }
 
         // Always hide the highlighted artwork.
-        this.highlightBitmap.visible = false;
+        if (this.highlightBitmap !== null) {
+            this.highlightBitmap.visible = false;
+        }
         if (this.disconnectedHighlightBitmap !== null) {
             this.disconnectedHighlightBitmap.visible = false;
         }
@@ -673,7 +681,9 @@ class Block {
         } else {
             // If the block is disconnected, use the disconnected bitmap.
             if (this.isDisconnected()) {
-                this.disconnectedBitmap.visible = true;
+                if (this.disconnectedBitmap !== null) {
+                    this.disconnectedBitmap.visible = true;
+                }
                 this.bitmap.visible = false;
             } else {
                 if (this.disconnectedBitmap !== null) {
